@@ -1,317 +1,161 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>备注管理系统</title>
+  <title>登录/注册</title>
   <!-- Tabler CSS -->
   <link href="https://cdn.jsdelivr.net/npm/tabler@latest/dist/css/tabler.min.css" rel="stylesheet">
   <style>
-    /* Custom CSS */
+    /* 自定义CSS */
     .container {
-      max-width: 800px;
+      max-width: 400px;
       margin: 0 auto;
-      padding: 20px;
+      margin-top: 100px;
     }
     .card {
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .form-group {
       margin-bottom: 20px;
+    }
+    /* 卡片胶囊样式 */
+    .notification-card {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1000;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      background-color: #fff;
+      max-width: 300px;
+      text-align: center;
+      display: none; /* 默认隐藏 */
+    }
+    .notification-card.success {
+      background-color: #a5ddee; /* 成功的背景颜色 */
+      border-color: #5f645d; /* 成功的边框颜色 */
+    }
+    .notification-card.error {
+      background-color: #e9abab; /* 失败的背景颜色 */
+      border-color: #3b3a3a; /* 失败的边框颜色 */
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Header -->
-    <header class="navbar navbar-expand-md navbar-light d-print-none">
-      <div class="container-xl">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pr-0 pr-md-3">
-          备注管理系统
-        </h1>
-        <div class="navbar-nav flex-row order-md-last">
-          <div class="nav-item dropdown">
-            <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-toggle="dropdown">
-              <span class="avatar avatar-sm" id="current-avatar" style="background-image: url('https://via.placeholder.com/150')"></span>
-              <div class="d-none d-xl-block pl-2">
-                <div>John Doe</div>
-                <div class="mt-1 small text-muted">Account</div>
-              </div>
-            </a>
-            <div class="dropdown-menu dropdown-menu-right">
-              <a href="#" class="dropdown-item">个人中心</a>
-              <a href="#" class="dropdown-item">退出</a>
+    <div class="card">
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" id="login-tab" data-toggle="tab" href="#login-form">登录</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="register-tab" data-toggle="tab" href="#register-form">注册</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="login-form">
+          <h3 class="card-title">登录</h3>
+          <form id="login-form">
+            <div class="form-group">
+              <label for="username">用户名</label>
+              <input type="text" id="username" name="username" class="form-control" required>
             </div>
-          </div>
+            <div class="form-group">
+              <label for="password">密码</label>
+              <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">登录</button>
+          </form>
+        </div>
+        <div class="tab-pane fade" id="register-form">
+          <h3 class="card-title">注册</h3>
+          <form id="register-form">
+            <div class="form-group">
+              <label for="new-username">用户名</label>
+              <input type="text" id="new-username" name="new-username" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="new-password">密码</label>
+              <input type="password" id="new-password" name="new-password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">注册</button>
+          </form>
         </div>
       </div>
-    </header>
-    
-    <!-- Content -->
-    <main class="content">
-      <!-- Tab Navigation -->
-      <div class="row">
-        <div class="col-md-3">
-          <ul class="nav nav-pills flex-column">
-            <li class="nav-item">
-              <a class="nav-link active" href="#user-notes" data-toggle="tab">用户备注</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#user-management" data-toggle="tab">用户管理</a>
-            </li>
-          </ul>
-        </div>
-        <div class="col-md-9">
-          <div class="tab-content">
-            <!-- User Notes -->
-            <div class="tab-pane active" id="user-notes">
-              <div class="card">
-                <div class="card-body">
-                  <form id="user-note-form">
-                    <div class="form-group">
-                      <label for="avatar">头像</label>
-                      <input type="file" id="avatar" name="avatar" accept="image/*" class="form-control">
-                    </div>
-                    <div class="form-group">
-                      <label for="date">日期</label>
-                      <input type="date" id="date" name="date" class="form-control">
-                    </div>
-                    <div class="form-group">
-                      <label for="name">名字</label>
-                      <input type="text" id="name" name="name" class="form-control">
-                    </div>
-                    <div class="form-group">
-                      <label for="age">年龄</label>
-                      <input type="number" id="age" name="age" class="form-control">
-                    </div>
-                    <div class="form-group">
-                      <label for="marital-status">婚姻状况</label>
-                      <select id="marital-status" name="marital-status" class="form-control">
-                        <option value="单身">单身</option>
-                        <option value="已婚">已婚</option>
-                        <option value="离异">离异</option>
-                      </select>
-                    </div>
-                    <div class="form-group">
-                      <label for="job">工作</label>
-                      <input type="text" id="job" name="job" class="form-control">
-                    </div>
-                    <div class="form-group">
-                      <label for="salary">工资</label>
-                      <input type="text" id="salary" name="salary" class="form-control">
-                    </div>
-                    <div class="form-group">
-                      <label for="hobby">爱好</label>
-                      <input type="text" id="hobby" name="hobby" class="form-control">
-                    </div>
-                    <div class="form-group">
-                      <label for="user-status">用户状况</label>
-                      <input type="text" id="user-status" name="user-status" class="form-control">
-                    </div>
-                    <button type="submit" class="btn btn-primary">保存</button>
-                  </form>
-                </div>
-              </div>
-            </div>
-            <!-- User Management -->
-            <div class="tab-pane" id="user-management">
-              <div id="user-management-content"></div>
-              <div id="user-edit-form" style="display: none;">
-                <div class="card">
-                  <div class="card-body">
-                    <form id="edit-user-form">
-                      <div class="form-group">
-                        <label for="edit-name">名字</label>
-                        <input type="text" id="edit-name" name="edit-name" class="form-control">
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-age">年龄</label>
-                        <input type="number" id="edit-age" name="edit-age" class="form-control">
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-marital-status">婚姻状况</label>
-                        <select id="edit-marital-status" name="edit-marital-status" class="form-control">
-                          <option value="单身">单身</option>
-                          <option value="已婚">已婚</option>
-                          <option value="离异">离异</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-job">工作</label>
-                        <input type="text" id="edit-job" name="edit-job" class="form-control">
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-salary">工资</label>
-                        <input type="text" id="edit-salary" name="edit-salary" class="form-control">
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-hobby">爱好</label>
-                        <input type="text" id="edit-hobby" name="edit-hobby" class="form-control">
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-user-status">用户状况</label>
-                        <input type="text" id="edit-user-status" name="edit-user-status" class="form-control">
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-avatar">头像</label>
-                        <input type="file" id="edit-avatar" name="edit-avatar" accept="image/*" class="form-control">
-                        <div id="current-avatar"></div>
-                      </div>
-                      <button type="submit" class="btn btn-primary">保存</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
+    </div>
   </div>
 
   <!-- Tabler JS -->
   <script src="https://cdn.jsdelivr.net/npm/tabler@latest/dist/js/tabler.min.js"></script>
   <script>
-    // Function to save data to local storage
-    function saveDataToLocalStorage() {
-      console.log("Saving data to local storage:", users);
-      localStorage.setItem('users', JSON.stringify(users));
-    }
-
-    // Function to get data from local storage
-    function getDataFromLocalStorage() {
-      const data = localStorage.getItem('users');
-      console.log("Data loaded from local storage:", data);
-      return data ? JSON.parse(data) : [];
-    }
-
-    // Mock user management data
-    let users = getDataFromLocalStorage();
-    console.log("Initial data:", users);
-
-   // Function to render user management content
-function renderUserManagement() {
-  const userManagementContent = document.getElementById('user-management-content');
-  userManagementContent.innerHTML = '';
-  console.log("Rendering user management. Data:", users);
-  users.forEach(user => {
-    const card = document.createElement('div');
-    card.classList.add('card');
-    card.innerHTML = `
-      <div class="card-body">
-        <div>头像: <img src="${user.avatar ? user.avatar : 'https://via.placeholder.com/150'}" alt="Avatar" style="max-width: 100px;"></div>
-        <div>姓名: ${user.name}</div>
-        <div>年龄: ${user.age}</div>
-        <div>婚姻状况: ${user.maritalStatus}</div>
-        <div>工作: ${user.job}</div>
-        <div>工资: ${user.salary}</div>
-        <div>爱好: ${user.hobby}</div>
-        <div>用户状况: ${user.userStatus}</div>
-        <button class="btn btn-outline-primary btn-sm" onclick="editUser(${user.id})">编辑</button>
-        <button class="btn btn-outline-danger btn-sm" onclick="deleteUser(${user.id})">删除</button>
-      </div>
-    `;
-    userManagementContent.appendChild(card);
-  });
-}
-
-    // Function to handle form submission
-    document.getElementById('user-note-form').addEventListener('submit', function(event) {
+    // 登录表单提交事件处理
+    document.getElementById('login-form').addEventListener('submit', function(event) {
       event.preventDefault();
-      const formData = new FormData(this);
-      console.log("Form data submitted:", formData);
-      const user = {
-        id: Date.now(), // Generating unique ID for user
-        name: formData.get('name'),
-        age: formData.get('age'),
-        maritalStatus: formData.get('marital-status'),
-        job: formData.get('job'),
-        salary: formData.get('salary'),
-        hobby: formData.get('hobby'),
-        userStatus: formData.get('user-status')
-      };
-      // Handle avatar upload
-      const avatarFile = formData.get('avatar');
-      if (avatarFile) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-          user.avatar = event.target.result;
-          users.push(user);
-          saveDataToLocalStorage();
-          renderUserManagement();
-        };
-        reader.readAsDataURL(avatarFile);
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const savedPassword = localStorage.getItem(username); // 获取保存的密码
+      if (password === savedPassword) {
+        showNotification('登录成功', '欢迎回来！', 'success');
+        setTimeout(() => {
+          window.location.href = 'body.html'; // 将页面重定向到 dashboard.html
+        }, 3000); // 3秒后自动跳转页面
       } else {
-        users.push(user);
-        saveDataToLocalStorage();
-        renderUserManagement();
+        showNotification('登录失败', '用户名或密码错误，请重试。', 'error');
       }
-      this.reset();
     });
 
-    // Function to edit user
-    function editUser(userId) {
-      const userIndex = users.findIndex(user => user.id === userId);
-      if (userIndex !== -1) {
-        const user = users[userIndex];
-        // Populate edit form with user data
-        document.getElementById('edit-name').value = user.name;
-        document.getElementById('edit-age').value = user.age;
-        document.getElementById('edit-marital-status').value = user.maritalStatus;
-        document.getElementById('edit-job').value = user.job;
-        document.getElementById('edit-salary').value = user.salary;
-        document.getElementById('edit-hobby').value = user.hobby;
-        document.getElementById('edit-user-status').value = user.userStatus;
-        // Display current avatar
-        document.getElementById('current-avatar').innerHTML = `
-          <img src="${user.avatar ? user.avatar : 'https://via.placeholder.com/150'}" alt="Avatar" style="max-width: 100px;">
-        `;
-        // Show edit form
-        document.getElementById('user-edit-form').style.display = 'block';
-
-        // Handle form submission for editing
-        document.getElementById('edit-user-form').addEventListener('submit', function(event) {
-          event.preventDefault();
-          // Update user data
-          user.name = document.getElementById('edit-name').value;
-          user.age = document.getElementById('edit-age').value;
-          user.maritalStatus = document.getElementById('edit-marital-status').value;
-          user.job = document.getElementById('edit-job').value;
-          user.salary = document.getElementById('edit-salary').value;
-          user.hobby = document.getElementById('edit-hobby').value;
-          user.userStatus = document.getElementById('edit-user-status').value;
-          // Update avatar if a new file is selected
-          const newAvatar = document.getElementById('edit-avatar').files[0];
-          if (newAvatar) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-              user.avatar = event.target.result;
-              saveDataToLocalStorage();
-              renderUserManagement();
-            };
-            reader.readAsDataURL(newAvatar);
-          } else {
-            // Save updated data to local storage and render user management
-            saveDataToLocalStorage();
-            renderUserManagement();
-          }
-          // Hide edit form
-          document.getElementById('user-edit-form').style.display = 'none';
-        });
+    // 注册表单提交事件处理
+    document.getElementById('register-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const newUsername = document.getElementById('new-username').value;
+      const newPassword = document.getElementById('new-password').value;
+      // 检查用户名是否已存在
+      if (localStorage.getItem(newUsername)) {
+        showNotification('注册失败', '该用户名已被注册，请选择另一个用户名。', 'error');
+      } else {
+        // 在本地保存注册的账户和密码
+        localStorage.setItem(newUsername, newPassword);
+        showNotification('注册成功', '欢迎加入我们！', 'success');
+        // 重置注册表单
+        this.reset();
       }
-    }
+    });
 
-    // Function to delete user
-    function deleteUser(userId) {
-      // Implementation for deleting user goes here
-      users = users.filter(user => user.id !== userId);
-      saveDataToLocalStorage();
-      renderUserManagement();
-      alert('Delete user with ID ' + userId);
-    }
+    // 切换标签页时重置表单
+    document.querySelectorAll('.nav-link').forEach(function(link) {
+      link.addEventListener('click', function() {
+        document.querySelectorAll('form').forEach(function(form) {
+          form.reset();
+        });
+      });
+    });
 
-    // Initialize user management content
-    renderUserManagement();
+    // 显示通知卡片
+    function showNotification(title, message, type) {
+      const notificationCard = document.createElement('div');
+      notificationCard.classList.add('notification-card');
+      if (type === 'success') {
+        notificationCard.classList.add('success');
+      } else if (type === 'error') {
+        notificationCard.classList.add('error');
+      }
+      notificationCard.innerHTML = `
+        <h4>${title}</h4>
+        <p>${message}</p>
+      `;
+      document.body.appendChild(notificationCard);
+      setTimeout(() => {
+        notificationCard.style.display = 'block'; // 修改为显示
+        setTimeout(() => {
+          notificationCard.style.display = 'none';
+          document.body.removeChild(notificationCard);
+        }, 3000); // 3秒后隐藏通知卡片
+      }, 100); // 100毫秒后显示通知卡片
+    }
   </script>
 </body>
 </html>
