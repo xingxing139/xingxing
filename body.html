@@ -116,51 +116,23 @@
             <!-- User Management -->
             <div class="tab-pane" id="user-management">
               <div id="user-management-content"></div>
-              <div id="user-edit-form" style="display: none;">
-                <div class="card">
-                  <div class="card-body">
-                    <form id="edit-user-form">
-                      <div class="form-group">
-                        <label for="edit-name">名字</label>
-                        <input type="text" id="edit-name" name="edit-name" class="form-control">
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-age">年龄</label>
-                        <input type="number" id="edit-age" name="edit-age" class="form-control">
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-marital-status">婚姻状况</label>
-                        <select id="edit-marital-status" name="edit-marital-status" class="form-control">
-                          <option value="单身">单身</option>
-                          <option value="已婚">已婚</option>
-                          <option value="离异">离异</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-job">工作</label>
-                        <input type="text" id="edit-job" name="edit-job" class="form-control">
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-salary">工资</label>
-                        <input type="text" id="edit-salary" name="edit-salary" class="form-control">
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-hobby">爱好</label>
-                        <input type="text" id="edit-hobby" name="edit-hobby" class="form-control">
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-user-status">用户状况</label>
-                        <input type="text" id="edit-user-status" name="edit-user-status" class="form-control">
-                      </div>
-                      <div class="form-group">
-                        <label for="edit-avatar">头像</label>
-                        <input type="file" id="edit-avatar" name="edit-avatar" accept="image/*" class="form-control">
-                        <div id="current-avatar"></div>
-                      </div>
-                      <button type="submit" class="btn btn-primary">保存</button>
-                    </form>
-                  </div>
-                </div>
+              <div id="pagination" class="mt-3">
+                <nav aria-label="Page navigation">
+                  <ul class="pagination justify-content-center">
+                    <li class="page-item" id="prev-page">
+                      <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">上一页</span>
+                      </a>
+                    </li>
+                    <li class="page-item" id="next-page">
+                      <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">下一页</span>
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
               </div>
             </div>
           </div>
@@ -189,31 +161,35 @@
     let users = getDataFromLocalStorage();
     console.log("Initial data:", users);
 
-   // Function to render user management content
-function renderUserManagement() {
-  const userManagementContent = document.getElementById('user-management-content');
-  userManagementContent.innerHTML = '';
-  console.log("Rendering user management. Data:", users);
-  users.forEach(user => {
-    const card = document.createElement('div');
-    card.classList.add('card');
-    card.innerHTML = `
-      <div class="card-body">
-        <div>头像: <img src="${user.avatar ? user.avatar : 'https://via.placeholder.com/150'}" alt="Avatar" style="max-width: 100px;"></div>
-        <div>姓名: ${user.name}</div>
-        <div>年龄: ${user.age}</div>
-        <div>婚姻状况: ${user.maritalStatus}</div>
-        <div>工作: ${user.job}</div>
-        <div>工资: ${user.salary}</div>
-        <div>爱好: ${user.hobby}</div>
-        <div>用户状况: ${user.userStatus}</div>
-        <button class="btn btn-outline-primary btn-sm" onclick="editUser(${user.id})">编辑</button>
-        <button class="btn btn-outline-danger btn-sm" onclick="deleteUser(${user.id})">删除</button>
-      </div>
-    `;
-    userManagementContent.appendChild(card);
-  });
-}
+    // Function to render user management content with pagination
+    function renderUserManagement(page) {
+      const userManagementContent = document.getElementById('user-management-content');
+      userManagementContent.innerHTML = '';
+      const itemsPerPage = 4;
+      const startIndex = (page - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const paginatedUsers = users.slice(startIndex, endIndex);
+      console.log("Rendering user management. Page:", page, "Data:", paginatedUsers);
+      paginatedUsers.forEach(user => {
+        const card = document.createElement('div');
+        card.classList.add('card');
+        card.innerHTML = `
+          <div class="card-body">
+            <div>头像: <img src="${user.avatar ? user.avatar : 'https://via.placeholder.com/150'}" alt="Avatar" style="max-width: 100px;"></div>
+            <div>姓名: ${user.name}</div>
+            <div>年龄: ${user.age}</div>
+            <div>婚姻状况: ${user.maritalStatus}</div>
+            <div>工作: ${user.job}</div>
+            <div>工资: ${user.salary}</div>
+            <div>爱好: ${user.hobby}</div>
+            <div>用户状况: ${user.userStatus}</div>
+            <button class="btn btn-outline-primary btn-sm" onclick="editUser(${user.id})">编辑</button>
+            <button class="btn btn-outline-danger btn-sm" onclick="deleteUser(${user.id})">删除</button>
+          </div>
+        `;
+        userManagementContent.appendChild(card);
+      });
+    }
 
     // Function to handle form submission
     document.getElementById('user-note-form').addEventListener('submit', function(event) {
@@ -238,13 +214,13 @@ function renderUserManagement() {
           user.avatar = event.target.result;
           users.push(user);
           saveDataToLocalStorage();
-          renderUserManagement();
+          renderUserManagement(1); // Render first page after adding a new user
         };
         reader.readAsDataURL(avatarFile);
       } else {
         users.push(user);
         saveDataToLocalStorage();
-        renderUserManagement();
+        renderUserManagement(1); // Render first page after adding a new user
       }
       this.reset();
     });
@@ -287,13 +263,13 @@ function renderUserManagement() {
             reader.onload = function(event) {
               user.avatar = event.target.result;
               saveDataToLocalStorage();
-              renderUserManagement();
+              renderUserManagement(1); // Render first page after editing user
             };
             reader.readAsDataURL(newAvatar);
           } else {
             // Save updated data to local storage and render user management
             saveDataToLocalStorage();
-            renderUserManagement();
+            renderUserManagement(1); // Render first page after editing user
           }
           // Hide edit form
           document.getElementById('user-edit-form').style.display = 'none';
@@ -306,12 +282,30 @@ function renderUserManagement() {
       // Implementation for deleting user goes here
       users = users.filter(user => user.id !== userId);
       saveDataToLocalStorage();
-      renderUserManagement();
+      renderUserManagement(1); // Render first page after deleting user
       alert('Delete user with ID ' + userId);
     }
 
+    // Pagination functionality
+    let currentPage = 1;
+    document.getElementById('prev-page').addEventListener('click', function(event) {
+      event.preventDefault();
+      if (currentPage > 1) {
+        currentPage--;
+        renderUserManagement(currentPage);
+      }
+    });
+    document.getElementById('next-page').addEventListener('click', function(event) {
+      event.preventDefault();
+      const totalPages = Math.ceil(users.length / 4);
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderUserManagement(currentPage);
+      }
+    });
+
     // Initialize user management content
-    renderUserManagement();
+    renderUserManagement(currentPage);
   </script>
 </body>
 </html>
