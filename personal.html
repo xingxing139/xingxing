@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心</title>
+    <!-- 引入Tabler的CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tabler@latest/dist/css/tabler.min.css" rel="stylesheet">
+    <!-- 添加自定义样式 -->
+    <style>
+        .page {
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .card {
+            margin-bottom: 20px;
+        }
+
+        /* 弹窗样式 */
+        .file-preview {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            z-index: 9999;
+        }
+
+        .file-preview-content {
+            text-align: center;
+        }
+
+        .file-preview-content img {
+            max-width: 100%;
+            max-height: 300px;
+        }
+
+        .close-button {
+            background-color: #ccc;
+            border: none;
+            color: #333;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="container">
+            <div class="card">
+                <div class="card-body">
+                    <h2>个人信息</h2>
+                    <form id="personal-info-form">
+                        <div class="form-group">
+                            <label for="name">姓名</label>
+                            <input type="text" id="name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">邮箱</label>
+                            <input type="email" id="email" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">保存</button>
+                    </form>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h2>文件上传</h2>
+                    <input type="file" id="file-upload" class="form-control-file">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加自定义JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const personalInfoForm = document.getElementById('personal-info-form');
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+
+            // 从本地存储中加载个人信息
+            loadPersonalInfo();
+
+            personalInfoForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                // 保存个人信息到本地存储
+                savePersonalInfo(nameInput.value, emailInput.value);
+            });
+
+            function savePersonalInfo(name, email) {
+                localStorage.setItem('name', name);
+                localStorage.setItem('email', email);
+                alert('个人信息已保存！');
+            }
+
+            function loadPersonalInfo() {
+                const name = localStorage.getItem('name');
+                const email = localStorage.getItem('email');
+
+                if (name && email) {
+                    nameInput.value = name;
+                    emailInput.value = email;
+                }
+            }
+
+            const fileUploadInput = document.getElementById('file-upload');
+
+            fileUploadInput.addEventListener('change', function () {
+                const file = fileUploadInput.files[0];
+                if (file) {
+                    // 使用 FileReader 读取文件
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        // 将文件内容保存到本地存储
+                        localStorage.setItem('uploadedFile', e.target.result);
+                        alert('文件已上传！');
+                        
+                        // 显示文件内容弹窗
+                        showFilePreview(e.target.result);
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            function showFilePreview(fileDataUrl) {
+                const filePreviewContainer = document.createElement('div');
+                filePreviewContainer.classList.add('file-preview');
+
+                const filePreviewContent = document.createElement('div');
+                filePreviewContent.classList.add('file-preview-content');
+                filePreviewContent.innerHTML = `
+                    <h3>文件预览</h3>
+                    <img src="${fileDataUrl}" alt="文件预览">
+                `;
+
+                const closeButton = document.createElement('button');
+                closeButton.classList.add('close-button');
+                closeButton.textContent = '关闭';
+                closeButton.addEventListener('click', function () {
+                    filePreviewContainer.remove();
+                });
+
+                filePreviewContainer.appendChild(filePreviewContent);
+                filePreviewContainer.appendChild(closeButton);
+                document.body.appendChild(filePreviewContainer);
+            }
+        });
+    </script>
+</body>
+</html>
